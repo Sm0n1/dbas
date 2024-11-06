@@ -85,9 +85,9 @@ CREATE TABLE activity_attendee(
 -- Tuple based constraints performs checks on collections of columns, i.e. CHECK(column1 > 0 OR column2 > 0).
 
 -- __TRIGGERS__
--- What is a trigger?
--- Name 3 events that can cause a trigger to activate.
--- What can be done with triggers?
+-- 1. What is a trigger? A trigger is a procedure that is automatically executed when a certain event occurs on a specific table.
+-- 2. Name 3 events that can cause a trigger to activate. Insertion (INSERT), modification (UPDATE), and removal (DELETE).
+-- 3. What can be done with triggers? Automatic validation and logging. Complex constraints spanning multiple tables.
 
 -- __USERS__
 INSERT INTO user_account(full_name) VALUES
@@ -124,7 +124,7 @@ WITH new_post AS (
     ) RETURNING post_id
 ) INSERT INTO text_post(post_id, contents) VALUES (
     (SELECT post_id FROM new_post),
-    E'The tism skulks in places dark.\nA honeyed smile and pupils stark.\nWhen watching it, it''s staying still,\nbut turn away,\nit goes to kill.'
+    E'The tism skulks in places dark.\nA honeyed smile and pupils stark.\nWhen watching it, it''s staying still,\nbut turn away, it goes to kill.'
 );
 WITH new_post AS (
     INSERT INTO post(user_account_id, title) VALUES (
@@ -176,7 +176,7 @@ INSERT INTO subscription(user_account_id, payment_date, payment_method) VALUES
 SELECT full_name FROM user_account;
 
 -- Display friend releationships
-SELECT ua_a.full_name AS user_a_name, ua_b.full_name AS user_b_name
+SELECT ua_a.full_name AS friend_name_a, ua_b.full_name AS friend_name_b
 FROM friendship f
 JOIN user_account ua_a ON f.user_account_id_a = ua_a.user_account_id
 JOIN user_account ua_b ON f.user_account_id_b = ua_b.user_account_id;
@@ -195,7 +195,7 @@ FROM post p
 JOIN video_post vp ON p.post_id = vp.post_id;
 
 -- Display events
-SELECT * FROM activity;
+SELECT *, end_time - start_time AS duration FROM activity;
 
 -- Display subscriptions
-SELECT user_account_id AS subscription_id, user_account_id, payment_date, payment_method FROM subscription;
+SELECT user_account_id AS subscription_id, *, (payment_date + INTERVAL '30 days')::DATE AS expiration_date FROM subscription;
