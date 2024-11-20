@@ -37,4 +37,5 @@ WITH RECURSIVE friend_chain AS (
 ) SELECT name, userid as user_id, friend_id FROM friend_chain;
 
 -- P+
-SELECT name, EVERY(many_likes) AS received_likes FROM (SELECT p.PostID, p.UserID, COUNT(1) > 49 AS many_likes FROM Post p INNER JOIN Likes l USING (PostID) WHERE date_part('month', p.date) = 3 GROUP BY p.PostID) AS viral INNER JOIN Users USING (UserID) GROUP BY UserID, name ORDER BY name;
+SELECT name, COUNT(1) > 49 AS received_likes FROM Post p INNER JOIN Likes l USING (PostID) INNER JOIN Users u ON (u.UserID = p.UserID) WHERE date_part('month', p.date) = 3 GROUP BY p.UserID, u.name ORDER BY name;
+
